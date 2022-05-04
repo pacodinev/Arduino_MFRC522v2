@@ -134,6 +134,9 @@ void MFRC522::PCD_Reset() {
   // The datasheet does not mention how long the SoftRest command takes to complete.
   // But the MFRC522 might have been in soft power-down mode (triggered by bit 4 of CommandReg) .
   // Section 8.8.2 in the datasheet says the oscillator start-up time is the start up time of the crystal + 37,74μs. Let us be generous: 50ms.
+
+  _driver.post_reset_init();
+
   uint8_t countTries = 0;
   do {
     // Wait for the PowerDown bit in CommandReg to be cleared (max 3x50ms).

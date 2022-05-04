@@ -17,6 +17,7 @@ public:
   static constexpr uint8_t UNUSED_PIN = UINT8_MAX;
   
   virtual bool init() = 0;
+  virtual bool post_reset_init() { return true; };
   
   /////////////////////////////////////////////////////////////////////////////////////
   // Basic interface functions for communicating with the MFRC522
