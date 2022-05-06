@@ -71,6 +71,7 @@ byte MFRC522DriverHardwareSerial::baud_rate_to_serialspeedreg_val (unsigned long
 
 bool MFRC522DriverHardwareSerial::init() {
   // TODO avoid double init.
+  _serial.end();
 #ifdef ESP32
   _serial.begin(9600, SERIAL_8N1, rxPin, txPin);
 #else
@@ -86,6 +87,7 @@ bool MFRC522DriverHardwareSerial::init() {
   {
     byte speed_reg_val = baud_rate_to_serialspeedreg_val(baud_rate);
     PCD_WriteRegister(PCD_Register::SerialSpeedReg, speed_reg_val);
+    _serial.end();
 #ifdef ESP32
     _serial.begin(baud_rate, SERIAL_8N1, rxPin, txPin); 
 #else
@@ -110,7 +112,7 @@ void MFRC522DriverHardwareSerial::PCD_WriteRegister(const PCD_Register reg,    /
                                         ) {
   while(_serial.available()>0)
     _serial.read();
-  _serial.write(reg & 0x3F);
+  _serial.write(reg & 0x7F);
   while(_serial.available() == 0);
   _serial.read(); // discard address
   _serial.write(value);
@@ -145,7 +147,7 @@ byte MFRC522DriverHardwareSerial::PCD_ReadRegister(const PCD_Register reg    ///
 
   while(_serial.available()>0)
     _serial.read();
-  _serial.write((reg & 0x3F) | 0x80);
+  _serial.write(reg | 0x80);
   while(_serial.available() == 0);
   value = _serial.read();
   
